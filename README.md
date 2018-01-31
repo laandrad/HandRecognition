@@ -3,7 +3,7 @@
 We are developing a deep learning algorithm for traking a hand on a webcam image. The goal is to use this as an input interface for games and learning applications on mobile devices.
 
 ## Useful links to hand images data sets
-https://www.mutah.edu.jo/biometrix/hand-images-databases.html
+https://www.mutah.edu.jo/biometrix/hand-images-databases.html  
 https://sites.google.com/view/11khands
 http://biometrics.idealtest.org/dbDetailForUser.do?id=5
 http://homepages.inf.ed.ac.uk/rbf/CVonline/Imagedbase.htm#gesture
