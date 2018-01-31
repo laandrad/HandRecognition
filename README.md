@@ -4,8 +4,8 @@ We are developing a deep learning algorithm for traking a hand on a webcam image
 
 ## Useful links to hand images data sets
 https://www.mutah.edu.jo/biometrix/hand-images-databases.html  
-https://sites.google.com/view/11khands
-http://biometrics.idealtest.org/dbDetailForUser.do?id=5
+https://sites.google.com/view/11khands. 
+http://biometrics.idealtest.org/dbDetailForUser.do?id=5. 
 http://homepages.inf.ed.ac.uk/rbf/CVonline/Imagedbase.htm#gesture
 
 ## Useful links to object classification with opencv and python
