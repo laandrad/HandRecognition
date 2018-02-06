@@ -7,55 +7,61 @@ Created on Wed Jan 24 13:25:53 2018
 """
 import time
 import cv2
-from imtools import Window, Model
+from imtools import pyramid, sliding_window
+from sklearn.externals import joblib
+from keras.models import load_model
 
 
 # Initialize video capture, window, and CNN model
 cap = cv2.VideoCapture(0)
 
-box_height = 250
-box_width = 200
-frame_height = 360
-frame_width = 640
-nh = 2
-nw = 4
-window = Window(box_height, box_width, frame_height, frame_width, nh, nw)
-h1, h2, w1, w2 = window.create_grid()
+box_height = 90
+box_width = 90
+frame_height = 450
+frame_width = 630
+step_size = 90
 
-model = Model('model.hd5', window)
+model_cnn = load_model('model_cnn.h5')
+model_svm = joblib.load('svm_model.pkl')
 
 
 # Start video feed
-while(True):
+while True:
     # read a frame
     ret, frame = cap.read()
     frame = cv2.flip(frame, 1)
     frame = cv2.resize(frame, (frame_width, frame_height))
-    
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
     tic = time.time()
-    batch = window.slide(frame, h1, h2, w1, w2)
+    for (i, resized) in enumerate(pyramid(gray)):
+        for (x, y, w) in sliding_window(resized, step_size, box_width, box_height):
+            if w.shape[1] != box_width or w.shape[0] != box_height:
+                continue
+            # img = cv2.resize(w, (90, 90))
+            img = img.reshape(1, 90, 90, 1)//255
+            cnn_features = model_cnn.predict(img)
+            pred = model_svm.predict(cnn_features)
+            # print('prediction:', pred[0])
+            cv2.rectangle(frame, (x, y),
+                          (x + box_width, y + box_height),
+                          (0, 255, 0),
+                          1)
+
+            if pred[0] == 0:
+                print('there\'s a hand!')
+                # cv2.imshow('hand', w)
+                cv2.rectangle(frame, (x, y),
+                              (x + box_height, y + box_width),
+                              (255, 255, 255),
+                              3)
     toc = time.time()
     grid_time = toc - tic
-    tic = time.time()
-    predictions = model.predict(batch)
-    toc = time.time()
-    prediction_time = toc - tic
-    tic = time.time()
-    predictions = [(0, 0) for x in range(len(h1))]
-    model.bounding_box(predictions, frame, h1, h2, w1, w2)
-    toc = time.time()
-    drawing_time = toc - tic
-    tot_time = grid_time + prediction_time + drawing_time
-    
-    print("Total Execution time: {},\n Grid: {}, {}%,\n Prediction: {}, {}%,\n Drawing: {}, {}%".format(
-            round(tot_time, 2),
-            round(grid_time, 2), round(grid_time / tot_time * 100),
-            round(prediction_time, 2), round(prediction_time / tot_time * 100),
-            round(drawing_time, 2), round(drawing_time / tot_time * 100)))
+    print('Execution time:', grid_time)
     
     cv2.imshow('Window 1', frame)
         
-    time.sleep(10)
+    time.sleep(.16)
     
     k = cv2.waitKey(1) & 0xFF
     if k == 27:
