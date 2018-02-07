@@ -2,6 +2,13 @@
 
 We are developing a deep learning algorithm for traking a hand on a webcam image. The goal is to use this as an input interface for games and learning applications on mobile devices.
 
+Flowchart
+1. TDT_function2: takes in raw images, resizes them and outputs train, dev, and test sets
+2. Get_data_model2: takes in processed images and outputs a 4D numpy array
+3. model2: takes in 4D array and trains a CNN model
+4. CNN_to_New_Features: takes in 4D array and outputs a 128-m array
+5. SVM_CNN_Features: takes in 128-m array and trains an SVM model
+
 ## Useful links to hand images data sets
 - https://www.mutah.edu.jo/biometrix/hand-images-databases.html  
 - https://sites.google.com/view/11khands  
